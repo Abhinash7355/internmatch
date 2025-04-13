@@ -5,13 +5,13 @@ import { Link } from "react-router-dom";
 import { useAnimation } from "@/hooks/use-animation";
 
 const Hero: React.FC = () => {
-  const titleRef = useAnimation();
-  const descriptionRef = useAnimation();
-  const buttonsRef = useAnimation();
+  const { ref: titleRef } = useAnimation();
+  const { ref: descriptionRef } = useAnimation({ delay: 200 });
+  const { ref: buttonsRef } = useAnimation({ delay: 400 });
 
   return (
-    <div className="bg-gradient-to-br from-white to-purple-50 py-16 md:py-24 overflow-hidden">
-      <div className="container mx-auto px-4 text-center relative">
+    <section className="bg-gradient-to-br from-white to-purple-50 py-16 md:py-24 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-purple-200 opacity-30 animate-pulse-soft"></div>
@@ -29,7 +29,6 @@ const Hero: React.FC = () => {
         <p 
           ref={descriptionRef}
           className="opacity-0 text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-8"
-          style={{ animationDelay: '0.2s' }}
         >
           Discover internship opportunities across various domains for B.Tech students. Apply directly with a single click.
         </p>
@@ -37,10 +36,9 @@ const Hero: React.FC = () => {
         <div 
           ref={buttonsRef}
           className="opacity-0 flex flex-col sm:flex-row justify-center gap-4"
-          style={{ animationDelay: '0.4s' }}
         >
           <Button 
-            className="bg-intern-purple hover:bg-intern-dark-purple text-white px-8 py-6 rounded-md btn-hover"
+            className="bg-intern-purple hover:bg-intern-dark-purple text-white px-6 py-3 sm:px-8 sm:py-6 rounded-md btn-hover transition-transform duration-300 hover:scale-105"
             asChild
           >
             <Link to="/browse">Browse Internships</Link>
@@ -48,14 +46,14 @@ const Hero: React.FC = () => {
           
           <Button 
             variant="outline" 
-            className="border-intern-purple text-intern-purple hover:bg-intern-purple hover:text-white px-8 py-6 rounded-md btn-hover"
+            className="border-intern-purple text-intern-purple hover:bg-intern-purple hover:text-white px-6 py-3 sm:px-8 sm:py-6 rounded-md btn-hover transition-transform duration-300 hover:scale-105"
             asChild
           >
             <Link to="/about">Learn More</Link>
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
