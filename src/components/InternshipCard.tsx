@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,15 +7,51 @@ import { Link } from "react-router-dom";
 
 interface InternshipCardProps {
   internship: Internship;
+  delay?: number;
 }
 
-const InternshipCard: React.FC<InternshipCardProps> = ({ internship }) => {
+const InternshipCard: React.FC<InternshipCardProps> = ({ internship, delay = 0 }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('opacity-100');
+              entry.target.classList.remove('opacity-0', 'translate-y-4');
+            }, delay * 100);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+    
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+    
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, [delay]);
+
   return (
-    <Card className="overflow-hidden border border-intern-card-border hover:border-intern-light-purple transition-colors duration-300 h-full flex flex-col">
+    <Card 
+      ref={cardRef}
+      className="opacity-0 translate-y-4 transition-all duration-500 overflow-hidden border border-intern-card-border hover:border-intern-light-purple hover:shadow-md hover:shadow-purple-100/50 h-full flex flex-col transform-gpu"
+    >
       <CardContent className="pt-6 pb-2 px-6 flex-1">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center">
-            <div className="h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center mr-3">
+            <div className="h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center mr-3 overflow-hidden">
               {internship.logo ? (
                 <img 
                   src={internship.logo} 
@@ -29,13 +64,13 @@ const InternshipCard: React.FC<InternshipCardProps> = ({ internship }) => {
                 </span>
               )}
             </div>
-            <div>
-              <h3 className="font-semibold text-lg text-gray-900">{internship.title}</h3>
+            <div className="text-left">
+              <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">{internship.title}</h3>
               <p className="text-sm text-gray-600">{internship.company}</p>
             </div>
           </div>
           {internship.featured && (
-            <Badge className="bg-intern-purple text-white">Featured</Badge>
+            <Badge className="bg-intern-purple text-white animate-pulse-soft">Featured</Badge>
           )}
         </div>
         
@@ -143,7 +178,7 @@ const InternshipCard: React.FC<InternshipCardProps> = ({ internship }) => {
       
       <CardFooter className="pt-0 pb-6 px-6 flex flex-col sm:flex-row gap-3">
         <Button 
-          className="bg-intern-purple hover:bg-intern-dark-purple text-white w-full sm:w-auto"
+          className="bg-intern-purple hover:bg-intern-dark-purple text-white w-full sm:w-auto transition-all duration-300 hover:scale-105"
           asChild
         >
           <a 
@@ -157,7 +192,7 @@ const InternshipCard: React.FC<InternshipCardProps> = ({ internship }) => {
         
         <Button 
           variant="outline" 
-          className="border-intern-purple text-intern-purple hover:bg-intern-purple hover:text-white w-full sm:w-auto"
+          className="border-intern-purple text-intern-purple hover:bg-intern-purple hover:text-white w-full sm:w-auto transition-all duration-300 hover:scale-105"
           asChild
         >
           <Link to={`/internship/${internship.id}`}>
