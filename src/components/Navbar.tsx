@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
           <Link to="/" className="text-gray-700 hover:text-intern-purple font-medium">
             Browse Internships
           </Link>
-          <Link to="/" className="text-gray-700 hover:text-intern-purple font-medium">
+          <Link to="/about" className="text-gray-700 hover:text-intern-purple font-medium">
             About Us
           </Link>
         </nav>
