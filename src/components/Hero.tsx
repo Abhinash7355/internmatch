@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Hero: React.FC = () => {
   return (
@@ -13,12 +14,16 @@ const Hero: React.FC = () => {
           Discover internship opportunities across various domains for B.Tech students. Apply directly with a single click.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 animate-in">
-          <Button className="bg-intern-purple hover:bg-intern-dark-purple text-white px-8 py-6 rounded-md">
-            Browse Internships
-          </Button>
-          <Button variant="outline" className="border-intern-purple text-intern-purple hover:bg-intern-purple hover:text-white px-8 py-6 rounded-md">
-            Learn More
-          </Button>
+          <Link to="/browse">
+            <Button className="bg-intern-purple hover:bg-intern-dark-purple text-white px-8 py-6 rounded-md">
+              Browse Internships
+            </Button>
+          </Link>
+          <Link to="/about">
+            <Button variant="outline" className="border-intern-purple text-intern-purple hover:bg-intern-purple hover:text-white px-8 py-6 rounded-md">
+              Learn More
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

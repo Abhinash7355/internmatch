@@ -13,6 +13,7 @@ import ContactUs from "./pages/ContactUs";
 import SearchInternships from "./pages/SearchInternships";
 import Services from "./pages/Services";
 import NotFound from "./pages/NotFound";
+import ChatAI from "./components/ChatAI";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ChatAI />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
