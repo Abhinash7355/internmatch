@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Message } from "@/types/chat";
+import { Message, ChatSession } from "@/types/chat";
 import { generateAIResponse } from "@/utils/chatService";
+import { saveChatSession, createNewChatSession, getChatSessionById } from "@/utils/chatStorageService";
 import ChatButton from "./chat/ChatButton";
 import ChatHeader from "./chat/ChatHeader";
 import ChatMessages from "./chat/ChatMessages";
@@ -11,21 +12,22 @@ import ChatInput from "./chat/ChatInput";
 const ChatAI: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      content: "Hello! How can I help you find the perfect internship today?",
-      sender: "ai",
-      timestamp: new Date(),
-    },
-  ]);
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Initialize chat session
+  useEffect(() => {
+    const newSession = createNewChatSession();
+    setCurrentSession(newSession);
+  }, []);
 
   const toggleChat = () => setIsOpen(!isOpen);
   const toggleMinimize = () => setIsMinimized(!isMinimized);
 
   const handleSendMessage = async (messageText: string) => {
+    if (!currentSession) return;
+
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -34,7 +36,15 @@ const ChatAI: React.FC = () => {
       timestamp: new Date(),
     };
     
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...currentSession.messages, userMessage];
+    const updatedSession = {
+      ...currentSession,
+      messages: updatedMessages,
+      updatedAt: new Date()
+    };
+    
+    setCurrentSession(updatedSession);
+    saveChatSession(updatedSession);
     setIsLoading(true);
     
     try {
@@ -48,7 +58,15 @@ const ChatAI: React.FC = () => {
         timestamp: new Date(),
       };
       
-      setMessages((prev) => [...prev, aiMessage]);
+      const finalMessages = [...updatedMessages, aiMessage];
+      const finalSession = {
+        ...currentSession,
+        messages: finalMessages,
+        updatedAt: new Date()
+      };
+      
+      setCurrentSession(finalSession);
+      saveChatSession(finalSession);
     } catch (error) {
       console.error("Error in chat:", error);
       toast({
@@ -83,7 +101,7 @@ const ChatAI: React.FC = () => {
       <ChatButton isOpen={isOpen} toggleChat={toggleChat} />
 
       {/* Chat Window */}
-      {isOpen && (
+      {isOpen && currentSession && (
         <div 
           id="chat-container"
           className={`fixed ${isMinimized ? 'h-14 w-72' : 'h-[500px] w-[350px]'} max-h-[80vh] bottom-20 right-6 bg-white rounded-lg shadow-xl flex flex-col border border-gray-200 transition-all duration-300 ease-in-out z-40`}
@@ -97,8 +115,14 @@ const ChatAI: React.FC = () => {
           {/* Chat Body */}
           {!isMinimized && (
             <>
-              <ChatMessages messages={messages} isLoading={isLoading} />
-              <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+              <ChatMessages 
+                messages={currentSession.messages} 
+                isLoading={isLoading} 
+              />
+              <ChatInput 
+                onSendMessage={handleSendMessage} 
+                isLoading={isLoading} 
+              />
             </>
           )}
         </div>

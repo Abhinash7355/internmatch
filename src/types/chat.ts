@@ -5,3 +5,10 @@ export interface Message {
   sender: "user" | "ai";
   timestamp: Date;
 }
+
+export interface ChatSession {
+  id: string;
+  messages: Message[];
+  createdAt: Date;
+  updatedAt: Date;
+}
