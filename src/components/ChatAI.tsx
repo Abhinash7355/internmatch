@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Send, X, Minimize2, Maximize2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Avatar } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -32,7 +31,44 @@ const ChatAI: React.FC = () => {
   const toggleChat = () => setIsOpen(!isOpen);
   const toggleMinimize = () => setIsMinimized(!isMinimized);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  // Function to generate AI response using OpenAI API
+  const generateAIResponse = async (userMessage: string) => {
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer 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",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini", // Using the faster and cheaper model
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful assistant for InternMatch, a platform for B.Tech students to find tech internships. Provide concise, accurate information about internships, application processes, and career advice. Keep responses brief and focused on helping students find suitable internships."
+            },
+            {
+              role: "user",
+              content: userMessage
+            }
+          ],
+          max_tokens: 150,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content.trim();
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+      return "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+    }
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!message.trim()) return;
@@ -49,26 +85,28 @@ const ChatAI: React.FC = () => {
     setMessage("");
     setIsLoading(true);
     
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "I can help you find internships in tech, marketing, or design. What field are you interested in?",
-        "Have you checked our new internship listings? We just added several remote opportunities!",
-        "You can filter internships by location, duration, and stipend on our Browse page.",
-        "Many companies on our platform offer flexible work arrangements for interns.",
-        "Don't forget to complete your profile to improve your chances of getting selected!",
-      ];
+    try {
+      // Get response from OpenAI
+      const aiResponseText = await generateAIResponse(message);
       
       const aiMessage: Message = {
         id: `ai-${Date.now()}`,
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: aiResponseText,
         sender: "ai",
         timestamp: new Date(),
       };
       
       setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error("Error in chat:", error);
+      toast({
+        title: "Error",
+        description: "Failed to get a response. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   useEffect(() => {

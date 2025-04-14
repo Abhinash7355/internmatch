@@ -9,7 +9,7 @@ A platform connecting B.Tech students with tech internship opportunities.
 - Search functionality with filters
 - Detailed internship information
 - Application submission process
-- AI-powered chat assistant
+- AI-powered chat assistant (OpenAI integration)
 - Responsive design for all devices
 - Interactive animations and transitions
 
@@ -21,6 +21,7 @@ A platform connecting B.Tech students with tech internship opportunities.
 - Shadcn UI Components
 - React Router
 - React Query
+- OpenAI API
 
 ## Chat AI Feature
 
@@ -30,4 +31,11 @@ The platform includes an AI chat assistant that helps users:
 - Provide guidance on preparing for interviews
 - Offer tips for creating effective profiles
 
-Note: The current implementation uses simulated responses. To connect with a real AI backend, replace the setTimeout function with an actual API call to your preferred AI service.
+The chat feature is powered by OpenAI's API, providing intelligent and context-aware responses to user queries.
+
+## Note on API Keys
+
+**Important**: The OpenAI API key in the repository is a placeholder. For production use:
+1. Replace it with your own OpenAI API key
+2. Consider implementing a proper backend service to securely handle API calls
+3. Never expose API keys directly in client-side code for production applications
