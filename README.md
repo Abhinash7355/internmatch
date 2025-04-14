@@ -13,6 +13,7 @@ A platform connecting B.Tech students with tech internship opportunities.
 - Responsive design for all devices
 - Interactive animations and transitions
 
+
 ## Technologies Used
 
 - React
